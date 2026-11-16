@@ -12,17 +12,18 @@ jobs:
   draft:
     uses: metal-stack/actions-common/.github/workflows/release-drafter.yaml@v1
 
+  lint:
+    uses: metal-stack/actions-common/.github/workflows/go-lint.yaml@v1
+    secrets: inherit
+
   test:
-    uses: metal-stack/actions-common/.github/workflows/go-build.yaml@v1
+    uses: metal-stack/actions-common/.github/workflows/go-test.yaml@v1
     secrets: inherit
     with:
-      build: false
       test-command: make test
 
   integration-tests:
-    uses: metal-stack/actions-common/.github/workflows/go-build.yaml@v1
+    uses: metal-stack/actions-common/.github/workflows/go-test.yaml@v1
     secrets: inherit
     with:
-      build: false
-      lint: false
       test-command: make test-integration
