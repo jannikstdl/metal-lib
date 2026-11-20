@@ -94,13 +94,14 @@ func UpdateKubeConfigContext(kubeConfig string, tokenInfo TokenInfo, userIDExtra
 		return "", err
 	}
 
-	// update only the user of an existing context, so a cluster or namespace set there is kept
 	existingContext, _, err := findMapListMap(cfg, "contexts", "name", contextName)
-	if err != nil || dyno.Set(existingContext, userName, "context", "user") != nil {
-		err = AddContext(cfg, contextName, "", userName)
-		if err != nil {
-			return "", err
+	if err == nil {
+		// update only the user of an existing context, so a cluster or namespace set there is kept
+		if err := dyno.Set(existingContext, userName, "context", "user"); err != nil {
+			return "", fmt.Errorf("error updating user of existing context %q: %w", contextName, err)
 		}
+	} else if err := AddContext(cfg, contextName, "", userName); err != nil {
+		return "", err
 	}
 
 	// use configured yaml
